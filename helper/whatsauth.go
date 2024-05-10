@@ -8,6 +8,39 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func WebHook(SecretHeader, WebhookSecret, WAKeyword, WAPhoneNumber, WAAPIQRLogin, WAAPIMessage string, msg model.IteungMessage, db *mongo.Database) (resp model.Response) {
+	if SecretHeader == WebhookSecret {
+		if IsLoginRequest(msg, WAKeyword) { //untuk whatsauth request login
+			resp = HandlerQRLogin(msg, WAKeyword, WAPhoneNumber, db, WAAPIQRLogin)
+		} else { //untuk membalas pesan masuk
+			resp = HandlerIncomingMessage(msg, WAPhoneNumber, db, WAAPIMessage)
+		}
+	} else {
+		resp.Response = "Secret Salah"
+	}
+	return
+}
+
+func RefreshWAToken(WebhookURL, WebhookSecret, WAPhoneNumber, WAAPIGetToken string, db *mongo.Database) (res *mongo.UpdateResult, err error) {
+	dt := &model.WebHook{
+		URL:    WebhookURL,
+		Secret: WebhookSecret,
+	}
+	resp, err := PostStructWithToken[model.User]("Token", WAAPIToken(WAPhoneNumber, db), dt, WAAPIGetToken)
+	if err != nil {
+		return
+	}
+	profile := &model.Profile{
+		Phonenumber: resp.PhoneNumber,
+		Token:       resp.Token,
+	}
+	res, err = ReplaceOneDoc(db, "profile", bson.M{"phonenumber": resp.PhoneNumber}, profile)
+	if err != nil {
+		return
+	}
+	return
+}
+
 func IsLoginRequest(msg model.IteungMessage, keyword string) bool {
 	return strings.Contains(msg.Message, keyword) && msg.From_link
 }

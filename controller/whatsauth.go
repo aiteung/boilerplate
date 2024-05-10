@@ -6,49 +6,27 @@ import (
 	"gocroot/model"
 
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 func WhatsAuthReceiver(c *fiber.Ctx) error {
 	var h model.Header
 	err := c.ReqHeaderParser(&h)
 	if err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	var resp model.Response
-	if h.Secret == config.WebhookSecret {
-		var msg model.IteungMessage
-		err = c.BodyParser(&msg)
-		if err != nil {
-			return err
-		}
-		if helper.IsLoginRequest(msg, config.WAKeyword) { //untuk whatsauth request login
-			resp = helper.HandlerQRLogin(msg, config.WAKeyword, config.WAPhoneNumber, config.Mongoconn, config.WAAPIQRLogin)
-		} else { //untuk membalas pesan masuk
-			resp = helper.HandlerIncomingMessage(msg, config.WAPhoneNumber, config.Mongoconn, config.WAAPIMessage)
-		}
-	} else {
-		resp.Response = "Secret Salah"
+	var msg model.IteungMessage
+	err = c.BodyParser(&msg)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
+	resp := helper.WebHook(h.Secret, config.WebhookSecret, config.WAKeyword, config.WAPhoneNumber, config.WAAPIQRLogin, config.WAAPIMessage, msg, config.Mongoconn)
 	return c.Status(fiber.StatusOK).JSON(resp)
 }
 
 func RefreshWAToken(c *fiber.Ctx) error {
-	dt := &model.WebHook{
-		URL:    config.WebhookURL,
-		Secret: config.WebhookSecret,
-	}
-	resp, err := helper.PostStructWithToken[model.User]("Token", helper.WAAPIToken(config.WAPhoneNumber, config.Mongoconn), dt, config.WAAPIGetToken)
+	res, err := helper.RefreshWAToken(config.WebhookURL, config.WebhookSecret, config.WAPhoneNumber, config.WAAPIGetToken, config.Mongoconn)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "response": resp})
-	}
-	profile := &model.Profile{
-		Phonenumber: resp.PhoneNumber,
-		Token:       resp.Token,
-	}
-	res, err := helper.ReplaceOneDoc(config.Mongoconn, "profile", bson.M{"phonenumber": resp.PhoneNumber}, profile)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "result": res})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"result": res})
 }
