@@ -1,6 +1,8 @@
 # Golang template for CI/CD in alwaysdata.com
 
-This is a simple Golang template using Go Fibre as the base framework, and mongodb.com as database host. It is compatible with alwaysdata.com CI/CD deployment.
+This is a simple Golang template using [Go Fiber](https://gofiber.io/) as the base framework, and mongodb.com as database host. It is compatible with alwaysdata.com CI/CD deployment.
+
+Start here: Just [Fork this repo](https://github.com/gocroot/alwaysdata/)
 
 ## MongoDB Preparation
 
@@ -57,7 +59,7 @@ Sign Up for a 100MB plan Free for life in [alwaysdata](https://www.alwaysdata.co
 2. Input the webhook URL(https://yourappname.alwaysdata.net/whatsauth/webhook) and your secret from the WEBHOOKSECRET setting environment on Always Data.  
    ![image](https://github.com/gocroot/alwaysdata/assets/11188109/e0b5cb9d-e9b3-4d04-bbd5-b03bd12293da)  
 3. Follow [this instruction](https://whatsauth.my.id/docs/), in the end of instruction you will get 30 days token using [this request](https://wa.my.id/apidocs/#/signup/signUpNewUser)
-4. Save the token into MongoDB, open iteung db, create a profile collection and insert this JSON document with your 30-day token and your WhatsApp number.
+4. Save the token into MongoDB, open iteung db, create a profile collection and insert this JSON document with your 30-day token and your WhatsApp number.  
    ![image](https://github.com/gocroot/alwaysdata/assets/11188109/5b7144c3-3cdb-472b-8ab3-41fe86dad9cb)  
    ![image](https://github.com/gocroot/alwaysdata/assets/11188109/829ae88a-be59-46f2-bddc-93482d0a4999)  
 
@@ -87,10 +89,4 @@ If you want to upgrade apps, please delete (go.mod) and (go.sum) files first, th
 go mod init gocroot
 go mod tidy
 ```
-
-## Others Provider Github Action
-
-inside the folder .github/workflows, you might choose your cloud provider and remove the .template extension :
-1. fly.io: fly.yml
-2. alwaysdata.com: alwaysdata.yml
 
