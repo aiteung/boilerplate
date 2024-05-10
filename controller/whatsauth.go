@@ -19,7 +19,12 @@ func WhatsAuthReceiver(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	resp := helper.WebHook(h.Secret, config.WebhookSecret, config.WAKeyword, config.WAPhoneNumber, config.WAAPIQRLogin, config.WAAPIMessage, msg, config.Mongoconn)
+	var resp model.Response
+	if h.Secret == config.WebhookSecret {
+		resp = helper.WebHook(config.WAKeyword, config.WAPhoneNumber, config.WAAPIQRLogin, config.WAAPIMessage, msg, config.Mongoconn)
+	} else {
+		resp.Response = "Secret Salah"
+	}
 	return c.Status(fiber.StatusOK).JSON(resp)
 }
 

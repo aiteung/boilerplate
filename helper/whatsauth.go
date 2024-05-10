@@ -8,15 +8,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func WebHook(SecretHeader, WebhookSecret, WAKeyword, WAPhoneNumber, WAAPIQRLogin, WAAPIMessage string, msg model.IteungMessage, db *mongo.Database) (resp model.Response) {
-	if SecretHeader == WebhookSecret {
-		if IsLoginRequest(msg, WAKeyword) { //untuk whatsauth request login
-			resp = HandlerQRLogin(msg, WAKeyword, WAPhoneNumber, db, WAAPIQRLogin)
-		} else { //untuk membalas pesan masuk
-			resp = HandlerIncomingMessage(msg, WAPhoneNumber, db, WAAPIMessage)
-		}
-	} else {
-		resp.Response = "Secret Salah"
+func WebHook(WAKeyword, WAPhoneNumber, WAAPIQRLogin, WAAPIMessage string, msg model.IteungMessage, db *mongo.Database) (resp model.Response) {
+	if IsLoginRequest(msg, WAKeyword) { //untuk whatsauth request login
+		resp = HandlerQRLogin(msg, WAKeyword, WAPhoneNumber, db, WAAPIQRLogin)
+	} else { //untuk membalas pesan masuk
+		resp = HandlerIncomingMessage(msg, WAPhoneNumber, db, WAAPIMessage)
 	}
 	return
 }
