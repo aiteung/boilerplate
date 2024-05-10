@@ -27,7 +27,6 @@ This boilerplate has several folders with different functions, such as:
 * controller: all of the endpoint functions
 * model: all of the type structs used in this app
 * helper: helper folder with list of function only called by others file
-* pkg: package folder with list of function use by controller
 
 ## Alwaysdata.com CI/CD set
 

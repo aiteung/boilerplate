@@ -4,7 +4,6 @@ import (
 	"gocroot/config"
 	"gocroot/helper"
 	"gocroot/model"
-	"gocroot/pkg"
 
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -23,10 +22,10 @@ func WhatsAuthReceiver(c *fiber.Ctx) error {
 		if err != nil {
 			return err
 		}
-		if pkg.IsLoginRequest(msg, config.WAKeyword) { //untuk whatsauth request login
-			resp = pkg.HandlerQRLogin(msg, config.WAKeyword)
+		if helper.IsLoginRequest(msg, config.WAKeyword) { //untuk whatsauth request login
+			resp = helper.HandlerQRLogin(msg, config.WAKeyword, config.WAPhoneNumber, config.Mongoconn, config.WAAPIQRLogin)
 		} else { //untuk membalas pesan masuk
-			resp = pkg.HandlerIncomingMessage(msg)
+			resp = helper.HandlerIncomingMessage(msg, config.WAPhoneNumber, config.Mongoconn, config.WAAPIMessage)
 		}
 	} else {
 		resp.Response = "Secret Salah"
@@ -39,7 +38,7 @@ func RefreshWAToken(c *fiber.Ctx) error {
 		URL:    config.WebhookURL,
 		Secret: config.WebhookSecret,
 	}
-	resp, err := helper.PostStructWithToken[model.User]("Token", pkg.WAAPIToken(config.WAPhoneNumber), dt, config.WAAPIGetToken)
+	resp, err := helper.PostStructWithToken[model.User]("Token", helper.WAAPIToken(config.WAPhoneNumber, config.Mongoconn), dt, config.WAAPIGetToken)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error(), "response": resp})
 	}
