@@ -89,9 +89,3 @@ go mod init gocroot
 go mod tidy
 ```
 
-## Others Provider Github Action
-
-inside the folder .github/workflows, you might choose your cloud provider and remove the .template extension :
-1. fly.io: fly.yml
-2. alwaysdata.com: alwaysdata.yml
-
