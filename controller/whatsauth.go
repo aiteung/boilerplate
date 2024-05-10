@@ -24,7 +24,7 @@ func WhatsAuthReceiver(c *fiber.Ctx) error {
 }
 
 func RefreshWAToken(c *fiber.Ctx) error {
-	res, err := helper.RefreshWAToken(config.WebhookURL, config.WebhookSecret, config.WAPhoneNumber, config.WAAPIGetToken, config.Mongoconn)
+	res, err := helper.RefreshToken(config.WebhookURL, config.WebhookSecret, config.WAPhoneNumber, config.WAAPIGetToken, config.Mongoconn)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}

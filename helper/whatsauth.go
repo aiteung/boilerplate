@@ -21,7 +21,7 @@ func WebHook(SecretHeader, WebhookSecret, WAKeyword, WAPhoneNumber, WAAPIQRLogin
 	return
 }
 
-func RefreshWAToken(WebhookURL, WebhookSecret, WAPhoneNumber, WAAPIGetToken string, db *mongo.Database) (res *mongo.UpdateResult, err error) {
+func RefreshToken(WebhookURL, WebhookSecret, WAPhoneNumber, WAAPIGetToken string, db *mongo.Database) (res *mongo.UpdateResult, err error) {
 	dt := &model.WebHook{
 		URL:    WebhookURL,
 		Secret: WebhookSecret,
