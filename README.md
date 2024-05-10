@@ -1,6 +1,6 @@
 # Golang template for CI/CD in alwaysdata.com
 
-This is a simple Golang template using Go Fibre as the base framework, and mongodb.com as database host. It is compatible with alwaysdata.com CI/CD deployment.
+This is a simple Golang template using [Go Fiber](https://gofiber.io/) as the base framework, and mongodb.com as database host. It is compatible with alwaysdata.com CI/CD deployment.
 
 ## MongoDB Preparation
 
